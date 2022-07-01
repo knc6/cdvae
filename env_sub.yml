@@ -32,7 +32,7 @@ dependencies:
   - streamlit==0.79.0
   - torch-cluster
   - torch-scatter
-  - torch-sparse
+  - torch-sparse==0.6.12
   - torch-spline-conv
   - torchdiffeq==0.0.1
   - wandb==0.10.33
