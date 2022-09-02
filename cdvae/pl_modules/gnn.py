@@ -315,7 +315,7 @@ class DimeNetPlusPlusWrap(DimeNetPlusPlus):
         num_before_skip=1,
         num_after_skip=2,
         num_output_layers=3,
-        readout='mean',
+        readout="mean",
     ):
         self.num_targets = num_targets
         self.cutoff = cutoff
@@ -345,17 +345,18 @@ class DimeNetPlusPlusWrap(DimeNetPlusPlus):
 
         if self.otf_graph:
             edge_index, cell_offsets, neighbors = radius_graph_pbc_wrapper(
-                data, self.cutoff, self.max_num_neighbors, data.num_atoms.device
+                data,
+                self.cutoff,
+                self.max_num_neighbors,
+                data.num_atoms.device,
             )
             data.edge_index = edge_index
             data.to_jimages = cell_offsets
             data.num_bonds = neighbors
 
         pos = frac_to_cart_coords(
-            data.frac_coords,
-            data.lengths,
-            data.angles,
-            data.num_atoms)
+            data.frac_coords, data.lengths, data.angles, data.num_atoms
+        )
 
         out = get_pbc_distances(
             data.frac_coords,
@@ -365,7 +366,7 @@ class DimeNetPlusPlusWrap(DimeNetPlusPlus):
             data.to_jimages,
             data.num_atoms,
             data.num_bonds,
-            return_offsets=True
+            return_offsets=True,
         )
 
         edge_index = out["edge_index"]
@@ -406,12 +407,13 @@ class DimeNetPlusPlusWrap(DimeNetPlusPlus):
 
         # Use mean
         if batch is None:
-            if self.readout == 'mean':
+            if self.readout == "mean":
                 energy = P.mean(dim=0)
-            elif self.readout == 'sum':
+            elif self.readout == "sum":
                 energy = P.sum(dim=0)
-            elif self.readout == 'cat':
+            elif self.readout == "cat":
                 import pdb
+
                 pdb.set_trace()
                 energy = torch.cat([P.sum(dim=0), P.mean(dim=0)])
             else:
@@ -425,6 +427,39 @@ class DimeNetPlusPlusWrap(DimeNetPlusPlus):
     @property
     def num_params(self):
         return sum(p.numel() for p in self.parameters())
+
+
+class ALIGNNEncoder(nn.Module):
+    """Wrapper for ALIGNN."""
+
+    def __init__(
+        self, num_targets=1, hidden_size=256, max_num_neighbors=12, cutoff=8.0
+    ):
+        super(ALIGNNEncoder, self).__init__()
+        from alignn.models.alignn import ALIGNN, ALIGNNConfig
+        from jarvis.core.graphs import Graph
+        from jarvis.core.atoms import Atoms
+        from jarvis.core.specie import atomic_numbers_to_symbols
+
+        self.alignn = ALIGNN(
+            ALIGNNConfig(
+                name="alignn",
+                output_features=num_targets,
+                hidden_features=hidden_size,
+            )
+        )
+        self.cutoff = cutoff
+        self.max_num_neighbors = max_num_neighbors
+
+    def forward(self, data):
+        elements = atomic_numbers_to_symbols(data.atom_types)
+        atoms = JAtoms(
+            coords=data.frac_coords, elements=elements, lattice_mat=lattice_mat
+        )
+        #TODO: Use CrystData instead of Graph.atom_dgl_multigraph
+        g, lg = Graph.atom_dgl_multigraph(atoms)
+        output = self.alignn([g, lg])
+        return output
 
 
 class GemNetTEncoder(nn.Module):
@@ -468,6 +503,6 @@ class GemNetTEncoder(nn.Module):
             angles=data.angles,
             edge_index=data.edge_index,
             to_jimages=data.to_jimages,
-            num_bonds=data.num_bonds
+            num_bonds=data.num_bonds,
         )
         return output
