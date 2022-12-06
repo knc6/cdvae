@@ -514,6 +514,7 @@ class CDVAE(BaseModule):
             property_loss = self.property_loss(z, batch)
         else:
             property_loss = 0.0
+        # print ('spg_loss',spg_loss)
 
         return {
             "num_atom_loss": num_atom_loss,
@@ -786,6 +787,7 @@ class CDVAE(BaseModule):
         log_dict = {
             f"{prefix}_loss": loss,
             f"{prefix}_natom_loss": num_atom_loss,
+            f"{prefix}_spg_loss": spg_loss,
             f"{prefix}_lattice_loss": lattice_loss,
             f"{prefix}_coord_loss": coord_loss,
             f"{prefix}_type_loss": type_loss,

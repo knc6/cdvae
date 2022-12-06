@@ -39,6 +39,7 @@ class CrystDataset(Dataset):
         self.graph_method = graph_method
         self.lattice_scale_method = lattice_scale_method
         self.use_spg = use_spg
+        print("use_spg", use_spg)
         self.cached_data = preprocess(
             self.path,
             preprocess_workers,
