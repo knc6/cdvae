@@ -24,6 +24,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
+        export WANDB_ANONYMOUS=must
         python -m pip install --upgrade pip
         pip install torch==2.0.0
         pip install -q torch-scatter -f https://data.pyg.org/whl/torch-2.0.0.html
@@ -43,9 +44,10 @@ jobs:
         export WABDB=$PWD/WABDB 
         export WABDB_DIR=$PWD/WABDB
         export HYDRA_JOBS=$PWD/HYDRA_JOBS
+        export WANDB_ANONYMOUS=must
         coverage run -m pytest
         coverage report -m -i
         codecov --token="43acbae5-6738-4eae-967a-4f089e6c431e"
-        python cdvae/run.py data=carbon expname=carbon
+        python cdvae/run.py data=supercon expname=supercon
         # python cdvae/run.py data=perov expname=perov model.predict_property=True
       
