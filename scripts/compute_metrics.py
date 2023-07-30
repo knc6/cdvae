@@ -219,7 +219,8 @@ class GenEval(object):
 
 class OptEval(object):
 
-    def __init__(self, crys, num_opt=100, eval_model_name=None):
+    # def __init__(self, crys, num_opt=100, eval_model_name=None):
+    def __init__(self, crys, num_opt=1, eval_model_name=None):
         """
         crys is a list of length (<step_opt> * <num_opt>),
         where <num_opt> is the number of different initialization for optimizing crystals,
