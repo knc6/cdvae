@@ -1,4 +1,7 @@
-# Crystal Diffusion Variational AutoEncoder
+[![name](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/knc6/jarvis-tools-notebooks/blob/master/jarvis-tools-notebooks/cdvae_example.ipynb)
+# Crystal Diffusion Variational AutoEncoder+ALIGNN For SuperConductor Design
+
+### Reference: https://pubs.acs.org/doi/10.1021/acs.jpclett.3c01260
 
 This software implementes Crystal Diffusion Variational AutoEncoder (CDVAE), which generates the periodic structure of materials.
 
