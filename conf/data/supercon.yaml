@@ -11,7 +11,7 @@ preprocess_workers: 1
 readout: mean
 max_atoms: 124
 otf_graph: false
-eval_model_name: supercon
+eval_model_name: carbon
 
 
 train_max_epochs: 400
